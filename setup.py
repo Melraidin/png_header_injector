@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="png_header_injector",
-    version="0.1",
+    version="0.1.1",
     description="Inject headers in PNGs without re-encoding",
     url="http://github.com/melraidin/png_header_injector",
     author="Kevin Martin",

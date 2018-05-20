@@ -72,7 +72,7 @@ def replace_text(in_png, out_png, text):
             if chunk_data.startswith(encoded_keyword):
                 # Read past our CRC and we're done with this
                 # text chunk we don't want to copy.
-                in_png.seek(4, whence=1)
+                in_png.seek(4, 1)
                 break
         else:
             # Write the unspecified text chunk and its CRC.

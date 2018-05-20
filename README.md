@@ -11,6 +11,22 @@ Compatiblity
 Tested successfully with Python 2.7 and Python 3.6.
 
 
+Performance
+===========
+
+A simple benchmark that performs similar operations using
+png_header_injector and Pillow. With png_header_injector a comment is
+added while removing any existing comments in the image and keeping
+all other TEXT chunks. With Pillow all existing TEXT chunks are
+removed and a comment is added.
+
+```
+$ python benchmark.py test.png
+Pillow total time: 6.868 seconds.
+Header injector total time: 0.016 seconds.
+```
+
+
 Installation
 ============
 

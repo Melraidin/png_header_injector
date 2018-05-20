@@ -24,7 +24,7 @@ def use_header_injector(input_path):
     end = time.time()
 
     print(
-        "Header injector total time: %0.3f" % (end - start))
+        "Header injector total time: %0.3f seconds." % (end - start))
 
 
 def inject_comment(input_path):
@@ -47,7 +47,7 @@ def use_pil(input_path):
     end = time.time()
 
     print(
-        "Pillow total time: %0.3f" % (end - start))
+        "Pillow total time: %0.3f seconds." % (end - start))
 
 
 if __name__ == "__main__":
