@@ -5,6 +5,12 @@ Provides a method of adding, replacing, and removing PNG text headers
 (TEXT chunks) without re-encoding the image data (IDAT chunks).
 
 
+Compatiblity
+============
+
+Tested successfully with Python 2.7 and Python 3.6.
+
+
 Installation
 ============
 

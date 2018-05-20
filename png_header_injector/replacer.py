@@ -1,7 +1,35 @@
+"""
+Provides ability to add, update, and remove TEXT chunks in PNG images
+without re-encoding the image data.
+"""
+
+
+import codecs
 import zlib
 
 
 ENCODING = "iso-8859-1"
+
+
+# Python compatibility wrappers.
+
+if hasattr(int, "to_bytes"):
+    def int_to_bytes(n, length):
+        return n.to_bytes(length, byteorder="big")
+else:
+    def int_to_bytes(n, length):
+        # Based on answer by miracle2k:
+        # https://stackoverflow.com/a/20793663
+        h = "%x" % n
+        s = ("0" * (len(h) % 2) + h).zfill(length * 2).decode("hex")
+        return s
+
+if hasattr(int, "from_bytes"):
+    def int_from_bytes(n):
+        return int.from_bytes(n, byteorder="big")
+else:
+    def int_from_bytes(n):
+        return int(codecs.encode(n, "hex"), 16)
 
 
 def replace_text(in_png, out_png, text):
@@ -32,7 +60,7 @@ def replace_text(in_png, out_png, text):
         raw_chunk_size = in_png.read(4)
         if len(raw_chunk_size) == 0:
             break
-        chunk_size = int.from_bytes(raw_chunk_size, byteorder="big")
+        chunk_size = int_from_bytes(raw_chunk_size)
 
         chunk_type = in_png.read(4)
         if chunk_type != "tEXt".encode(ENCODING):
@@ -65,7 +93,7 @@ def copy_chunk_remainder(out, png, chunk_size, chunk_type):
         chunk_type: Type of chunk.
     """
 
-    out.write(chunk_size.to_bytes(4, byteorder="big"))
+    out.write(int_to_bytes(chunk_size, 4))
     out.write(chunk_type)
 
     # Add the 4-byte CRC.
@@ -82,8 +110,8 @@ def copy_ihdr(out, png):
     """
 
     # IHDR chunk.
-    ihdr_size = int.from_bytes(png.read(4), byteorder="big")
-    out.write(ihdr_size.to_bytes(4, byteorder="big"))
+    ihdr_size = int_from_bytes(png.read(4))
+    out.write(int_to_bytes(ihdr_size, 4))
 
     # IHDR chunk type.
     out.write(png.read(4))
@@ -106,8 +134,10 @@ def write_text(out, keyword, value):
     """
 
     data_block = (keyword + "\0" + value).encode(ENCODING)
-    out.write(len(data_block).to_bytes(4, byteorder="big"))
+    out.write(int_to_bytes(len(data_block), 4))
     type_block = "tEXt".encode(ENCODING)
     out.write(type_block)
     out.write(data_block)
-    out.write((zlib.crc32(type_block + data_block) & 0xffffffff).to_bytes(4, byteorder="big"))
+    out.write(int_to_bytes(
+        zlib.crc32(type_block + data_block) & 0xffffffff,
+        4))
